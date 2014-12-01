@@ -36,6 +36,9 @@
 		A62AFE4C1A2C490C002C4EEE /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62AFE4A1A2C490C002C4EEE /* Contact.swift */; };
 		A62AFE4D1A2C490C002C4EEE /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62AFE4B1A2C490C002C4EEE /* Contacts.swift */; };
 		A62AFE4F1A2C53B3002C4EEE /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62AFE4E1A2C53B3002C4EEE /* Tools.swift */; };
+		AD619F7B1A2C927C00BAC68F /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD619F7A1A2C927C00BAC68F /* Event.swift */; };
+		AD619F7D1A2C9EAF00BAC68F /* EventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD619F7C1A2C9EAF00BAC68F /* EventCell.swift */; };
+		AD619F7F1A2CB28900BAC68F /* EventDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD619F7E1A2CB28900BAC68F /* EventDetailVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +86,9 @@
 		A62AFE4A1A2C490C002C4EEE /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		A62AFE4B1A2C490C002C4EEE /* Contacts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		A62AFE4E1A2C53B3002C4EEE /* Tools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
+		AD619F7A1A2C927C00BAC68F /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		AD619F7C1A2C9EAF00BAC68F /* EventCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventCell.swift; sourceTree = "<group>"; };
+		AD619F7E1A2CB28900BAC68F /* EventDetailVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventDetailVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,6 +245,9 @@
 				A62AFE441A2C3AFB002C4EEE /* NewEventStartDateVC.swift */,
 				A62AFE461A2C4283002C4EEE /* NewEventEndDateVC.swift */,
 				A62AFE481A2C4513002C4EEE /* NewEventAddPeopleVC.swift */,
+				AD619F7A1A2C927C00BAC68F /* Event.swift */,
+				AD619F7C1A2C9EAF00BAC68F /* EventCell.swift */,
+				AD619F7E1A2CB28900BAC68F /* EventDetailVC.swift */,
 			);
 			name = Events;
 			sourceTree = "<group>";
@@ -351,11 +360,14 @@
 				A62AFE3E1A2C1637002C4EEE /* VerifyPhoneVC.swift in Sources */,
 				A62AFDF81A2C0001002C4EEE /* AppDelegate.swift in Sources */,
 				A62AFE4C1A2C490C002C4EEE /* Contact.swift in Sources */,
+				AD619F7D1A2C9EAF00BAC68F /* EventCell.swift in Sources */,
 				A62AFE471A2C4283002C4EEE /* NewEventEndDateVC.swift in Sources */,
 				A62AFE4D1A2C490C002C4EEE /* Contacts.swift in Sources */,
 				A62AFE491A2C4513002C4EEE /* NewEventAddPeopleVC.swift in Sources */,
 				A62AFE4F1A2C53B3002C4EEE /* Tools.swift in Sources */,
+				AD619F7F1A2CB28900BAC68F /* EventDetailVC.swift in Sources */,
 				A62AFE451A2C3AFB002C4EEE /* NewEventStartDateVC.swift in Sources */,
+				AD619F7B1A2C927C00BAC68F /* Event.swift in Sources */,
 				A62AFE411A2C29E8002C4EEE /* EventsVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -567,6 +579,7 @@
 				A62AFE131A2C0001002C4EEE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A62AFE141A2C0001002C4EEE /* Build configuration list for PBXNativeTarget "wamblTests" */ = {
 			isa = XCConfigurationList;
@@ -575,6 +588,7 @@
 				A62AFE161A2C0001002C4EEE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

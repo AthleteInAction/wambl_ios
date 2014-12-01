@@ -10,14 +10,19 @@ import UIKit
 
 class NewEventStartDateVC: UIViewController {
     
-    var new_event: PFObject!
+    var event: PFObject!
+    var existing: Bool = false
 
     @IBOutlet weak var start_date: UIDatePicker!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
+        if existing {
+            
+            start_date.date = event["start_date"] as NSDate
+            
+        }
         
     }
 
@@ -32,10 +37,11 @@ class NewEventStartDateVC: UIViewController {
         
         if segue.identifier == "start_to_end" {
             
-            new_event["start_date"] = start_date.date
+            event["start_date"] = start_date.date
             
             var vc = segue.destinationViewController as NewEventEndDateVC
-            vc.new_event = new_event
+            vc.event = event
+            vc.existing = existing
             
         }
         

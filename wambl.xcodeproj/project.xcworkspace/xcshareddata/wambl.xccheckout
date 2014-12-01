@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>7412CE27-E045-49F9-A8A5-3C1C9A05D7B3</string>
+	<key>IDESourceControlProjectName</key>
+	<string>wambl</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>B069BDA2DCB9FEBDA6C35D85F31E3229ED0702A2</key>
+		<string>https://github.com/onlyexcellence/projects.git</string>
+		<key>DEF1372DAFE25D0B9AA0AE0BC65BB6D60B7589C9</key>
+		<string>github.com:onlyexcellence/wambl_ios.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>wambl.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>B069BDA2DCB9FEBDA6C35D85F31E3229ED0702A2</key>
+		<string>../../../..</string>
+		<key>DEF1372DAFE25D0B9AA0AE0BC65BB6D60B7589C9</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:onlyexcellence/wambl_ios.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>DEF1372DAFE25D0B9AA0AE0BC65BB6D60B7589C9</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>B069BDA2DCB9FEBDA6C35D85F31E3229ED0702A2</string>
+			<key>IDESourceControlWCCName</key>
+			<string>..</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>DEF1372DAFE25D0B9AA0AE0BC65BB6D60B7589C9</string>
+			<key>IDESourceControlWCCName</key>
+			<string>wambl_ios</string>
+		</dict>
+	</array>
+</dict>
+</plist>

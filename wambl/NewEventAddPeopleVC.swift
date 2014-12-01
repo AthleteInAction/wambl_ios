@@ -10,7 +10,8 @@ import UIKit
 
 class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
     
-    var new_event: PFObject!
+    var event: PFObject!
+    var existing: Bool = false
     
     var phone_contacts: [Contact] = []
     var selected_contacts: [Contact] = []
@@ -26,13 +27,11 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
         
         saveBTN.enabled = false
         
-        phone_contacts = Contacts.getContacts()!
-        
-        getAppContacts()
-        
     }
     
     func getAppContacts(){
+        
+        phone_contacts = Contacts.getContacts()!
         
         var list: [String] = []
         
@@ -72,6 +71,8 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
                 
                 
             }
+            
+            NSLog("GOT USERS")
             
         }
         
@@ -128,6 +129,7 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
         } else {
             
             cell.textLabel.text = "\(selected_contacts[indexPath.row].contact_full)"
+            cell.selectionStyle = .None
             
         }
         
@@ -144,6 +146,11 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
             selected_contacts.append(filtered_contacts[indexPath.row])
             self.tableView.reloadData()
             searchDisplayController?.setActive(false, animated: false)
+            if selected_contacts.count == 0 {
+                saveBTN.enabled = false
+            } else {
+                saveBTN.enabled = true
+            }
             
         } else {
             
@@ -153,7 +160,44 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
         
     }
     
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        if tableView == searchDisplayController?.searchResultsTableView {
+            
+            
+            
+        } else {
+            
+            if editingStyle == .Delete {
+                
+                selected_contacts.removeAtIndex(indexPath.row)
+                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                
+                if selected_contacts.count == 0 {
+                    saveBTN.enabled = false
+                } else {
+                    saveBTN.enabled = true
+                }
+                
+            }
+            
+        }
+        
+    }
+    
     func searchBarTextDidBeginEditing(searchBar: UISearchBar!) {
+        
+        
+        
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        
+        
+        
+    }
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
         
         
         
@@ -182,9 +226,45 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
                     (c.last_name.lowercaseString as NSString).rangeOfString(searchText.lowercaseString).length != 0 {
                         
                         filtered_contacts.append(c)
-                        println(c.display_name)
                         
                 }
+                
+            }
+            
+        }
+        
+    }
+    
+    @IBAction func saveTPD(sender: AnyObject) {
+        
+        navigationItem.title = "Creating..."
+        saveBTN.enabled = false
+        
+        var users: PFRelation = event.relationForKey("users")
+        var admins: PFRelation = event.relationForKey("admins")
+        
+        for c in selected_contacts {
+            
+            users.addObject(c.user)
+            
+        }
+        
+        event["creator"] = currentUser
+        admins.addObject(currentUser)
+        
+        event.saveInBackgroundWithBlock { (success: Bool, error: NSError!) -> Void in
+            
+            if success {
+                
+                self.dismissViewControllerAnimated(true, completion: nil)
+                
+            } else {
+                
+                var code: Int = error.userInfo?["code"] as Int
+                var error_string: String = error.userInfo?["error"] as String
+                Error.report(currentUser, code: code, error: error_string, alert: true, p: self)
+                
+                self.saveBTN.enabled = true
                 
             }
             

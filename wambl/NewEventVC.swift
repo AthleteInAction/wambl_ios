@@ -10,7 +10,8 @@ import UIKit
 
 class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
-    var new_event: PFObject = PFObject(className: "Events")
+    var event: PFObject?
+    var existing: Bool = false
     
     @IBOutlet weak var nameTXT: UITextField!
     @IBOutlet weak var locTXT: UITextField!
@@ -22,7 +23,23 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        nextBTN.enabled = false
+        nextBTN.enabled = false
+        
+        if event == nil {
+            
+            event = PFObject(className: "Events")
+            
+        } else {
+            
+            navigationItem.title = "Edit Event"
+            
+            existing = true
+            
+            nameTXT.text = event?["name"] as String
+            locTXT.text = event?["location"] as String
+            descTXT.text = event?["description"] as String
+            
+        }
         
         descTXT.layer.borderColor = UIColor(red: 0.90, green: 0.90, blue: 0.90, alpha: 1).CGColor
         descTXT.textColor = nameTXT.textColor
@@ -36,6 +53,8 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         
         nameTXT.addTarget(self, action: "checkClean", forControlEvents: .EditingChanged)
         locTXT.addTarget(self, action: "checkClean", forControlEvents: .EditingChanged)
+        
+        checkClean()
         
     }
     
@@ -109,11 +128,17 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
     @IBAction func nextTPD(sender: UIBarButtonItem) {
         
-        new_event["name"] = nameTXT.text
-        new_event["location"] = locTXT.text
-        new_event["description"] = descTXT.text
+        event?["name"] = nameTXT.text
+        event?["location"] = locTXT.text
+        event?["description"] = descTXT.text
         
         self.performSegueWithIdentifier("new_event_dates", sender: self)
+        
+    }
+    
+    @IBAction func cancelTPD(sender: UIBarButtonItem) {
+        
+        self.dismissViewControllerAnimated(true, completion: nil)
         
     }
     
@@ -122,7 +147,8 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         if segue.identifier == "new_event_dates" {
             
             var vc = segue.destinationViewController as NewEventStartDateVC
-            vc.new_event = new_event
+            vc.event = event
+            vc.existing = existing
             
         }
         

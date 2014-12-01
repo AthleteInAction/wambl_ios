@@ -10,15 +10,37 @@ import UIKit
 
 class NewEventEndDateVC: UIViewController {
     
-    var new_event: PFObject!
+    var event: PFObject!
+    var existing: Bool = false
+    var vc: NewEventAddPeopleVC!
     
     @IBOutlet weak var end_date: UIDatePicker!
+    @IBOutlet weak var nextBTN: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        end_date.date = new_event["start_date"] as NSDate
-        end_date.minimumDate = new_event["start_date"] as? NSDate
+        if existing {
+            
+            nextBTN.title = "Save"
+            
+            end_date.date = event["end_date"] as NSDate
+            
+        } else {
+            
+            end_date.date = event["start_date"] as NSDate
+            
+            vc = storyboard?.instantiateViewControllerWithIdentifier("new_event_add_people_vc") as NewEventAddPeopleVC
+            vc.getAppContacts()
+            
+        }
+        end_date.minimumDate = event["start_date"] as? NSDate
+        
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        
+        
         
     }
 
@@ -28,18 +50,44 @@ class NewEventEndDateVC: UIViewController {
         
         
     }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+
+    @IBAction func nextTPD(sender: UIBarButtonItem) {
         
-        if segue.identifier == "end_to_add" {
+        event["end_date"] = end_date.date
+        
+        if existing {
             
-            new_event["end_date"] = end_date.date
+            navigationItem.title = "Saving..."
             
-            var vc = segue.destinationViewController as NewEventAddPeopleVC
-            vc.new_event = new_event
+            event.saveInBackgroundWithBlock { (success: Bool, error: NSError!) -> Void in
+                
+                if success {
+                    
+                    self.dismissViewControllerAnimated(true, completion: nil)
+                    
+                } else {
+                    
+                    var code: Int = error.userInfo?["code"] as Int
+                    var error_string: String = error.userInfo?["error"] as String
+                    Error.report(currentUser, code: code, error: error_string, alert: true, p: self)
+                    
+                    self.nextBTN.enabled = true
+                    
+                    self.navigationItem.title = "End Date"
+                    
+                }
+                
+            }
+            
+        } else {
+            
+            vc.event = event
+            vc.existing = existing
+            
+            navigationController?.pushViewController(vc, animated: true)
             
         }
         
     }
-
+    
 }

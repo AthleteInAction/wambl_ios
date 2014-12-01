@@ -1,6 +1,6 @@
 class Error {
     
-    class func report(user: PFUser?,code: Int,error: String,alert: Bool,p: UIViewController){
+    class func report(user: PFUser?,code: Int,error: String,alert: Bool,p: AnyObject){
         
         var pf_error = PFObject(className: "Errors")
         
