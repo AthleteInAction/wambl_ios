@@ -7,6 +7,7 @@ class Contact {
     var user: PFUser!
     var admin: Bool = false
     var creator: Bool = false
+    var confirmed: Bool = false
     var first_name: String!
     var last_name: String!
     var db_name: String!

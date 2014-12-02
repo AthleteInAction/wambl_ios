@@ -34,4 +34,24 @@ class Tools {
         
     }
     
+    class func match(users: [PFUser],number: String) -> Bool {
+        
+        var clean = false
+        
+        for u in users {
+            
+            if u.username == number {
+                
+                clean = true
+                
+                break
+                
+            }
+            
+        }
+        
+        return clean
+        
+    }
+    
 }

@@ -189,7 +189,12 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
-        self.performSegueWithIdentifier("event_from_events", sender: nil)
+        var vc = self.storyboard?.instantiateViewControllerWithIdentifier("event_detail_vc") as EventDetailVC
+        vc.event = selected_event
+        vc.loadEvent()
+        self.navigationController?.pushViewController(vc, animated: true)
+        
+//        self.performSegueWithIdentifier("event_from_events", sender: nil)
         
     }
     

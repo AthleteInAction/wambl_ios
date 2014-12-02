@@ -240,17 +240,19 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
         navigationItem.title = "Creating..."
         saveBTN.enabled = false
         
-        var users: PFRelation = event.relationForKey("users")
+        event["creator"] = currentUser
+        
         var admins: PFRelation = event.relationForKey("admins")
+        admins.addObject(currentUser)
+        
+        var invited: PFRelation = event.relationForKey("invited")
+        invited.addObject(currentUser)
         
         for c in selected_contacts {
             
-            users.addObject(c.user)
+            invited.addObject(c.user)
             
         }
-        
-        event["creator"] = currentUser
-        admins.addObject(currentUser)
         
         event.saveInBackgroundWithBlock { (success: Bool, error: NSError!) -> Void in
             
