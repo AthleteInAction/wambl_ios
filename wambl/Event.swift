@@ -13,6 +13,8 @@ class Event {
     var object: PFObject!
     var admin: Bool = false
     var creator: Bool = false
+    var confirmed: Bool = false
+    var is_loaded: Bool = false
     
     init(){}
     

@@ -202,4 +202,66 @@ class DB {
     // ========================================================================
     // ========================================================================
     
+    class contacts {
+        
+        class func load(view: AnyObject,completion: (s: Bool,c: [Contact]) -> Void){
+            
+            var s: Bool!
+            
+            var phone_contacts = Contacts.getContacts()!
+            var app_contacts: [Contact] = []
+            
+            var list: [String] = []
+            
+            for c in phone_contacts {
+                
+                list.append("'\(c.phone_number)'")
+                
+            }
+            
+            var query_string = ",".join(list)
+            
+            var pred = NSPredicate(format:"username IN {\(query_string)}")
+            var query = PFQuery(className: "_User", predicate: pred)
+            
+            query.findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
+                
+                if !(error != nil){
+                    
+                    s = true
+                    
+                    for object in objects {
+                        
+                        var user = object as PFUser
+                        
+                        var c: Contact = Tools.findContactByNumber(phone_contacts, number: user.username)
+                        
+                        if !c.empty {
+                            
+                            c.user = user
+                            c.db_name = user["name"] as String
+                            app_contacts.append(c)
+                            
+                        }
+                        
+                    }
+                    
+                } else {
+                    
+                    s = false
+                    
+                    var code = error.userInfo?["code"] as Int
+                    var error_string = error.userInfo?["error"] as String
+                    Error.report(currentUser, code: code, error: error_string, alert: true, p: view)
+                    
+                }
+                
+                completion(s: s,c: app_contacts)
+                
+            }
+            
+        }
+        
+    }
+    
 }

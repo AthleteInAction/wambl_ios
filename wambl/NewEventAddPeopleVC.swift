@@ -15,7 +15,6 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
     
     var phone_contacts: [Contact] = []
     var selected_contacts: [Contact] = []
-    var app_contacts: [Contact] = []
     var filtered_contacts: [Contact] = []
     
     @IBOutlet weak var saveBTN: UIBarButtonItem!
@@ -26,55 +25,6 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
         searchDisplayController?.searchResultsTableView.delegate = self
         
         saveBTN.enabled = false
-        
-    }
-    
-    func getAppContacts(){
-        
-        phone_contacts = Contacts.getContacts()!
-        
-        var list: [String] = []
-        
-        for c in phone_contacts {
-            
-            list.append("'\(c.phone_number)'")
-            
-        }
-        
-        var query_string = ",".join(list)
-        
-        var pred = NSPredicate(format:"username IN {\(query_string)}")
-        var query = PFQuery(className: "_User", predicate: pred)
-        
-        query.findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
-            
-            if !(error != nil){
-                
-                for object in objects {
-                    
-                    var user = object as PFUser
-                    
-                    var c: Contact = Tools.findContactByNumber(self.phone_contacts, number: user.username)
-                    
-                    if !c.empty {
-                        
-                        c.user = user
-                        c.db_name = user["name"] as String
-                        self.app_contacts.append(c)
-                        
-                    }
-                    
-                }
-                
-            } else {
-                
-                
-                
-            }
-            
-            NSLog("GOT USERS")
-            
-        }
         
     }
 
@@ -207,7 +157,7 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
         
         filtered_contacts.removeAll(keepCapacity: true)
         
-        for c in app_contacts {
+        for c in CONTACTS.contacts {
             
             var clean = true
             for b in selected_contacts {

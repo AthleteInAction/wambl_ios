@@ -8,13 +8,20 @@
 
 import UIKit
 
-class EventDetailVC: UITableViewController {
+protocol EventPTC {
+    
+    func refreshEvent(event: Event)
+    
+}
+
+class EventDetailVC: UITableViewController, InviteesPTC, InviteesAdminsPTC {
+    
+    var events_delegate: EventPTC!
     
     var event: Event!
     
-    var rc: UIRefreshControl!
+    var rc: UIRefreshControl = UIRefreshControl()
     
-    var phone_contacts: [Contact]!
     var invited: [Contact] = []
     var confirmed: [PFUser] = []
     var admins: [PFUser] = []
@@ -31,12 +38,25 @@ class EventDetailVC: UITableViewController {
     
     @IBOutlet weak var inviteesTXT: UILabel!
     
+    var do_load: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        rc = UIRefreshControl()
         rc.addTarget(self, action: "loadEvent", forControlEvents: UIControlEvents.ValueChanged)
         self.view.addSubview(rc)
+        
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        if do_load {
+            
+            setData()
+            
+            do_load = false
+            
+        }
         
     }
     
@@ -62,6 +82,8 @@ class EventDetailVC: UITableViewController {
             
         }
         
+        event.confirmed = confirmedSW.on
+        
         if invited.count == 0 {
             
             inviteesTXT.text = "Invitees"
@@ -77,7 +99,10 @@ class EventDetailVC: UITableViewController {
         endTXT.text = Date.fullString((event.object["end_date"] as NSDate))
         
         rc.endRefreshing()
+        
         tableView.reloadData()
+        
+        events_delegate.refreshEvent(event)
         
     }
     
@@ -98,22 +123,17 @@ class EventDetailVC: UITableViewController {
             if api_count >= 4 {
                 
                 self.setData()
+                self.event.is_loaded = true
                 
             }
             
         }
         
-        DB.event.invited.load(self.event.object, view: self) { (s, c) -> Void in
+        loadInvited { (s, c) -> Void in
             
             if s {
                 
-                self.invited.removeAll(keepCapacity: true)
-                
-                for invitee in c {
-                    
-                    self.invited.append(invitee)
-                    
-                }
+                self.invited = c
                 
             }
             
@@ -122,6 +142,7 @@ class EventDetailVC: UITableViewController {
             if api_count >= 4 {
                 
                 self.setData()
+                self.event.is_loaded = true
                 
             }
             
@@ -146,6 +167,7 @@ class EventDetailVC: UITableViewController {
             if api_count >= 4 {
                 
                 self.setData()
+                self.event.is_loaded = true
                 
             }
             
@@ -170,10 +192,28 @@ class EventDetailVC: UITableViewController {
             if api_count >= 4 {
                 
                 self.setData()
+                self.event.is_loaded = true
                 
             }
             
         }
+        
+    }
+    
+    func loadInvited(action: (s: Bool,c: [Contact]) -> Void){
+        
+        DB.event.invited.load(self.event.object, view: self) { (s, c) -> Void in
+            
+            action(s: s, c: c)
+            
+        }
+        
+    }
+    
+    func refreshInvited(new_invited: [Contact]) {
+        
+        invited = new_invited
+        setData()
         
     }
 
@@ -196,6 +236,9 @@ class EventDetailVC: UITableViewController {
             vc.confirmed = confirmed
             vc.admins = admins
             vc.admin = admin
+            vc.i_am_confirmed = confirmedSW.on
+            vc.event_delegate = self
+            vc.event_admins_delegate = self
             vc.setData()
             self.navigationController?.pushViewController(vc, animated: true)
             
@@ -245,13 +288,46 @@ class EventDetailVC: UITableViewController {
             
         }
         
+        for i in 0..<countElements(invited) {
+            
+            if invited[i].phone_number == currentUser.username {
+                
+                invited[i].confirmed = sender.on
+                
+                break
+                
+            }
+            
+        }
+        
         confirmed_loader.startAnimating()
         
         event.object.saveInBackgroundWithBlock { (success: Bool, error: NSError!) -> Void in
             
             if success {
                 
+                self.event.confirmed = sender.on
+                self.events_delegate.refreshEvent(self.event)
                 
+                if sender.on {
+                    
+                    self.confirmed.append(currentUser)
+                    
+                } else {
+                    
+                    for i in 0..<countElements(self.confirmed) {
+                        
+                        if self.confirmed[i].username == currentUser.username {
+                            
+                            self.confirmed.removeAtIndex(i)
+                            
+                            break
+                            
+                        }
+                        
+                    }
+                    
+                }
                 
             } else {
                 
@@ -259,11 +335,20 @@ class EventDetailVC: UITableViewController {
                 var error_string = error.userInfo?["error"] as String
                 Error.report(currentUser, code: code, error: error_string, alert: true, p: self)
                 
+                self.confirmedSW.on = !self.confirmedSW.on
+                
             }
             
             self.confirmed_loader.stopAnimating()
             
         }
+        
+    }
+    
+    func refreshAdmins(new_admins: [PFUser]) {
+        
+        admins = new_admins
+        tableView.reloadData()
         
     }
     

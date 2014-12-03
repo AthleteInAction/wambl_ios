@@ -13,6 +13,7 @@ class Contact {
     var db_name: String!
     var display_name: String!
     var contact_full: String!
+    var sort_name: String!
     var phone_number: String!
     
     var empty: Bool = false

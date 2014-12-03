@@ -31,7 +31,6 @@ class NewEventEndDateVC: UIViewController {
             end_date.date = event["start_date"] as NSDate
             
             vc = storyboard?.instantiateViewControllerWithIdentifier("new_event_add_people_vc") as NewEventAddPeopleVC
-            vc.getAppContacts()
             
         }
         end_date.minimumDate = event["start_date"] as? NSDate

@@ -111,6 +111,12 @@ class Contacts {
                 }
                 contact.phone_number = phone
                 
+                if lastName == "" {
+                    contact.sort_name = firstName
+                } else {
+                    contact.sort_name = lastName
+                }
+                
                 contacts.append(contact)
                 
             }

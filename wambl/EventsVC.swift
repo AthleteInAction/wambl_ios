@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, EventPTC {
 
     var year: Int!
     
@@ -144,6 +144,24 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         
     }
     
+    func refreshEvent(event: Event) {
+        
+        for i in 0..<countElements(events) {
+            
+            if events[i].object.objectId == event.object.objectId {
+                
+                events[i] = event
+                
+                break
+                
+            }
+            
+        }
+        
+        setData(events)
+        
+    }
+    
     @IBAction func yearPLUS(sender: UIBarButtonItem) {
         
         year = year+1
@@ -190,11 +208,11 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
         var vc = self.storyboard?.instantiateViewControllerWithIdentifier("event_detail_vc") as EventDetailVC
+        vc.events_delegate = self
         vc.event = selected_event
+        vc.do_load = true
         vc.loadEvent()
         self.navigationController?.pushViewController(vc, animated: true)
-        
-//        self.performSegueWithIdentifier("event_from_events", sender: nil)
         
     }
     

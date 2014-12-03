@@ -8,7 +8,22 @@
 
 import UIKit
 
-class InviteesVC: UITableViewController {
+protocol InviteesPTC {
+    
+    func refreshInvited(new_invited: [Contact])
+    
+}
+
+protocol InviteesAdminsPTC {
+    
+    func refreshAdmins(new_admins: [PFUser])
+    
+}
+
+class InviteesVC: UITableViewController, InviteesPTC, InviteeCellPTC {
+    
+    var event_delegate: InviteesPTC!
+    var event_admins_delegate: InviteesAdminsPTC!
     
     var event: Event!
     
@@ -17,6 +32,8 @@ class InviteesVC: UITableViewController {
     var invited: [Contact] = []
     var confirmed: [PFUser] = []
     var admins: [PFUser] = []
+    
+    var i_am_confirmed: Bool!
     
     var admin: Bool = false
     
@@ -36,13 +53,7 @@ class InviteesVC: UITableViewController {
             
             if s {
                 
-                self.invited.removeAll(keepCapacity: true)
-                
-                for invitee in c {
-                    
-                    self.invited.append(invitee)
-                    
-                }
+                self.invited = c
                 
             }
             
@@ -123,8 +134,23 @@ class InviteesVC: UITableViewController {
         }
         
         checkConfirmed()
+        checkAdmin()
+        
         rc.endRefreshing()
+        
+        invited.sort({$0.contact_full < $1.contact_full})
+        
         tableView.reloadData()
+        
+        event_delegate.refreshInvited(invited)
+        event_admins_delegate.refreshAdmins(admins)
+        
+    }
+    
+    func refreshInvited(new_invited: [Contact]) {
+        
+        invited = new_invited
+        setData()
         
     }
 
@@ -147,25 +173,131 @@ class InviteesVC: UITableViewController {
         
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
+        
+        
+    }
+    
+    override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
         
         var invitee = invited[indexPath.row] as Contact
+        var cell = tableView.cellForRowAtIndexPath(indexPath) as InviteeCell
         
-        if invitee.confirmed {
+        var removeAction = UITableViewRowAction(style: UITableViewRowActionStyle.Default, title: "Remove") { (a,i) -> Void in
             
-            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+            var confirmAlert = UIAlertController(title: "Confirm", message: "Are you sure you want to remove ?", preferredStyle: UIAlertControllerStyle.Alert)
             
-        } else {
+            confirmAlert.addAction(UIAlertAction(title: "Remove", style: UIAlertActionStyle.Destructive, handler: { (a) -> Void in
+                
+                var i_invited = self.event.object.relationForKey("invited") as PFRelation
+                i_invited.removeObject(invitee.user)
+                
+                var a_invited = self.event.object.relationForKey("admins") as PFRelation
+                a_invited.removeObject(invitee.user)
+                
+                var c_invited = self.event.object.relationForKey("confirmed") as PFRelation
+                c_invited.removeObject(invitee.user)
+                
+                cell.loader.startAnimating()
+                
+                self.event.object.saveInBackgroundWithBlock({ (success: Bool, error: NSError!) -> Void in
+                    
+                    if !(error != nil) {
+                        
+                        self.invited.removeAtIndex(indexPath.row)
+                        self.event_delegate.refreshInvited(self.invited)
+                        tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                        
+                    } else {
+                        
+                        let code = error.userInfo?["code"] as Int
+                        let error_string = error.userInfo?["error"] as String
+                        Error.report(currentUser, code: code, error: error_string, alert: true, p: self)
+                        
+                    }
+                    
+                    cell.loader.stopAnimating()
+                    
+                    tableView.setEditing(false, animated: true)
+                    
+                })
+                
+            }))
             
-            cell.accessoryType = UITableViewCellAccessoryType.None
+            confirmAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: { (a) -> Void in
+                
+                tableView.setEditing(false, animated: true)
+                
+            }))
+            
+            self.presentViewController(confirmAlert, animated: true, completion: nil)
             
         }
         
-        cell.textLabel.text = invitee.contact_full
+        return [removeAction]
+        
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        var cell = tableView.dequeueReusableCellWithIdentifier("cell") as InviteeCell
+        
+        var invitee = invited[indexPath.row] as Contact
+        
+        cell.invitees_delegate = self
+        cell.event = event
+        cell.invitee = invitee
+        cell.cell_index = indexPath.row
+        
+        if invitee.confirmed {
+            
+            cell.confirmedTXT.text = "CONFIRMED"
+            cell.nameTXT.alpha = 1
+            cell.confirmedTXT.alpha = 1
+            
+        } else {
+            
+            cell.confirmedTXT.text = "INVITED"
+            cell.nameTXT.alpha = 0.5
+            cell.confirmedTXT.alpha = 0.5
+            
+        }
+        
+        cell.adminSW.on = invitee.admin
+        
+        if invitee.user.username == currentUser.username {
+            
+            cell.adminSW.hidden = true
+            cell.adminTXT.hidden = true
+            
+        }
+        
+        cell.nameTXT.text = invitee.contact_full
         
         return cell
+        
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        
+    }
+    
+    override func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+        
+        var invitee = invited[indexPath.row] as Contact
+        
+        if invitee.user.username == currentUser.username {
+            
+            return UITableViewCellEditingStyle.None
+            
+        } else {
+            
+            return UITableViewCellEditingStyle.Delete
+            
+        }
         
     }
     
@@ -173,14 +305,52 @@ class InviteesVC: UITableViewController {
         
         for i in 0..<invited.count {
             
+            var x: Bool = false
+            
             for c in confirmed {
                 
                 if c.username == invited[i].user.username {
                     
-                    invited[i].confirmed = true
+                    x = true
+                    
+                    break
                     
                 }
                 
+            }
+            
+            if x {
+                invited[i].confirmed = true
+            } else {
+                invited[i].confirmed = false
+            }
+            
+        }
+        
+    }
+    
+    func checkAdmin(){
+        
+        for i in 0..<invited.count {
+            
+            var x: Bool = false
+            
+            for c in admins {
+                
+                if c.username == invited[i].user.username {
+                    
+                    x = true
+                    
+                    break
+                    
+                }
+                
+            }
+            
+            if x {
+                invited[i].admin = true
+            } else {
+                invited[i].admin = false
             }
             
         }
@@ -189,10 +359,45 @@ class InviteesVC: UITableViewController {
     
     func invitePeople(){
         
-        var vc = storyboard?.instantiateViewControllerWithIdentifier("new_event_add_people_vc") as NewEventAddPeopleVC
-        vc.selected_contacts = invited
-        vc.getAppContacts()
-        self.presentViewController(vc, animated: true, completion: nil)
+        var vc = storyboard?.instantiateViewControllerWithIdentifier("add_invitee_vc") as AddInviteeVC
+        vc.invited = invited
+        vc.event = event
+        vc.invitees_delegate = self
+        vc.event_delegate = event_delegate
+        var nav = UINavigationController(rootViewController: vc)
+        self.presentViewController(nav, animated: true, completion: nil)
+        
+    }
+    
+    func addAdmin(user: PFUser) {
+        
+        admins.append(user)
+        
+        setData()
+        
+    }
+    
+    func removeAdmin(user: PFUser) {
+        
+        for i in 0..<countElements(admins) {
+            
+            if admins[i].username == user.username {
+                
+                admins.removeAtIndex(i)
+                
+                break
+                
+            }
+            
+        }
+        
+        setData()
+        
+    }
+    
+    func confirmAdmin(alert: UIAlertController) {
+        
+        self.presentViewController(alert, animated: true, completion: nil)
         
     }
 
