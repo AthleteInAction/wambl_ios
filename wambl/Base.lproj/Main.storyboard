@@ -384,6 +384,9 @@
                                                 <constraint firstItem="7CL-Aa-IJe" firstAttribute="leading" secondItem="o0L-B5-JRA" secondAttribute="leadingMargin" constant="6" id="wFP-dH-Rbq"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="pda-ZK-8Lv" kind="push" id="A1c-CW-Pf1"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -506,6 +509,46 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="St7-Cl-fPC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1697" y="1796"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="bG2-rE-lfH">
+            <objects>
+                <viewController id="pda-ZK-8Lv" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4BD-m4-7K3"/>
+                        <viewControllerLayoutGuide type="bottom" id="UDd-hG-39d"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="dSb-kR-OUE">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ItM-gh-DkB">
+                                <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                                <items>
+                                    <barButtonItem style="plain" id="ROW-1b-cuh">
+                                        <textField key="customView" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="5jt-DE-NUk">
+                                            <rect key="frame" x="16" y="7" width="289" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                        </textField>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="ItM-gh-DkB" firstAttribute="leading" secondItem="dSb-kR-OUE" secondAttribute="leading" id="4XY-f6-TPE"/>
+                            <constraint firstAttribute="trailing" secondItem="ItM-gh-DkB" secondAttribute="trailing" id="57M-TB-jtI"/>
+                            <constraint firstItem="UDd-hG-39d" firstAttribute="top" secondItem="ItM-gh-DkB" secondAttribute="bottom" id="mfU-cY-lj3"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="6Pt-qA-MzR"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="TNN-kp-NEg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1313" y="2446"/>
         </scene>
         <!--Add InviteeVC-->
         <scene sceneID="vIt-Uw-8pj">
