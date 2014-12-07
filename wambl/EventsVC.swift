@@ -8,7 +8,13 @@
 
 import UIKit
 
-class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, EventPTC {
+protocol RefreshEventPTC {
+    
+    func refreshEvent(event: Event)
+    
+}
+
+class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, AddEventPTC, RefreshEventPTC {
 
     var year: Int!
     
@@ -50,115 +56,25 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ev
     
     func loadData(){
         
-        var admins_done = false
-        var users_done = false
-        
-        var tmp_events: [Event] = []
-        
-        var users_query = PFQuery(className: "Events")
-        users_query.whereKey("users", containedIn: [currentUser])
-        
-        var admins_query = PFQuery(className: "Events")
-        admins_query.whereKey("admins", containedIn: [currentUser])
-        
-        users_query.findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
+        DB.getEvents { (s, e) -> Void in
             
-            if !(error != nil){
+            if s {
                 
-                for object in objects {
-                    
-                    var event = object as PFObject
-                    
-                    var tmp_event = Event()
-                    tmp_event.object = event
-                    
-                    tmp_events.append(tmp_event)
-                    
-                }
-                
-            } else {
-                
-                NSLog("USERS QUERY ERROR")
+                self.events = e
                 
             }
             
-            users_done = true
-            
-            if admins_done {
-                
-                self.setData(tmp_events)
-                
-            }
-            
-        }
-        
-        admins_query.findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
-            
-            if !(error != nil){
-                
-                for object in objects {
-                    
-                    var event = object as PFObject
-                    
-                    var tmp_event = Event()
-                    tmp_event.object = event
-                    tmp_event.admin = true
-                    
-                    var creator = event["creator"] as PFUser
-                    
-                    if creator.objectId == currentUser.objectId {
-                        
-                        tmp_event.creator = true
-                        
-                    }
-                    
-                    tmp_events.append(tmp_event)
-                    
-                }
-                
-            } else {
-                
-                NSLog("ADMINS QUERY ERROR")
-                
-            }
-            
-            admins_done = true
-            
-            if users_done {
-                
-                self.setData(tmp_events)
-                
-            }
+            self.setData()
             
         }
         
     }
     
-    func setData(tmp_events: Array<Event>){
-        
-        self.events = tmp_events
+    func setData(){
         
         self.eventsTBL.reloadData()
         
         self.refreshControl.endRefreshing()
-        
-    }
-    
-    func refreshEvent(event: Event) {
-        
-        for i in 0..<countElements(events) {
-            
-            if events[i].object.objectId == event.object.objectId {
-                
-                events[i] = event
-                
-                break
-                
-            }
-            
-        }
-        
-        setData(events)
         
     }
     
@@ -192,9 +108,9 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ev
         
         var cell = tableView.dequeueReusableCellWithIdentifier("cell") as EventCell
         
-        var event = events[indexPath.row].object
+        var event = events[indexPath.row]
         
-        cell.nameTXT.text = event["name"] as? String
+        cell.nameTXT.text = event.name
         
         return cell
         
@@ -203,16 +119,20 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ev
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         var event: Event = events[indexPath.row] as Event
-        selected_event = event
-        
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
         var vc = self.storyboard?.instantiateViewControllerWithIdentifier("event_detail_vc") as EventDetailVC
-        vc.events_delegate = self
-        vc.event = selected_event
-        vc.do_load = true
-        vc.loadEvent()
+        vc.event = event
+        vc.refresh_event_delegate = self
+        vc.loadView()
+        if event.is_loaded {
+            vc.setData()
+        } else {
+            vc.loadAll()
+        }
+        
         self.navigationController?.pushViewController(vc, animated: true)
+        
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
     }
     
@@ -225,7 +145,7 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ev
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [AnyObject]? {
         
         var event: Event = events[indexPath.row] as Event
-        var event_name: String = event.object["name"] as String
+        
         var cell = tableView.cellForRowAtIndexPath(indexPath) as EventCell
         
         var editAction = UITableViewRowAction(style: UITableViewRowActionStyle.Default, title: "Edit" , handler: { (a: UITableViewRowAction!, i: NSIndexPath!) -> Void in
@@ -236,43 +156,65 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ev
                 
                 tableView.setEditing(false, animated: true)
                 
-                var vc = self.storyboard?.instantiateViewControllerWithIdentifier("new_event_vc") as NewEventVC
-                vc.event = event.object
-                
-                let nav = UINavigationController(rootViewController: vc)
-                
-                self.presentViewController(nav, animated:true, completion: nil)
-                
             })
             
             let leaveEvent = UIAlertAction(title: "Leave Event", style: UIAlertActionStyle.Destructive, handler: {(alert: UIAlertAction!) in
                 
+                var confirmAlert = UIAlertController(title: "Confirm", message: "Are you sure you wish to leave \(event.name)?", preferredStyle: UIAlertControllerStyle.Alert)
                 
-                
-            })
-            
-            let deleteEvent = UIAlertAction(title: "Delete Event", style: UIAlertActionStyle.Destructive, handler: {(alert: UIAlertAction!) in
-                
-                var confirmAlert: UIAlertController!
-                
-                confirmAlert = UIAlertController(title: "Confirm", message: "Are you sure you wish to delete \(event_name)?", preferredStyle: UIAlertControllerStyle.Alert)
-                
-                confirmAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { (action: UIAlertAction!) in
+                confirmAlert.addAction(UIAlertAction(title: "Leave", style: .Destructive, handler: { (action: UIAlertAction!) in
                     
                     cell.loader.startAnimating()
                     
-                    event.object.deleteInBackgroundWithBlock({ (success: Bool!, error: NSError!) -> Void in
+                    event.invited.removeObject(currentUser)
+                    event.admins.removeObject(currentUser)
+                    event.confirmed.removeObject(currentUser)
+                    
+                    event.save({ (s) -> Void in
                         
-                        if !(error != nil) {
+                        if s {
                             
                             self.events.removeAtIndex(indexPath.row)
                             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
                             
                         } else {
                             
-                            var code = error.userInfo?["code"] as Int
-                            var error_string = error.userInfo?["error"] as String
-                            Error.report(currentUser, code: code, error: error_string, alert: true, p: self)
+                            tableView.setEditing(false, animated: true)
+                            
+                        }
+                        
+                        cell.loader.stopAnimating()
+                        
+                    })
+                    
+                }))
+                
+                confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction!) in
+                    
+                    tableView.setEditing(false, animated: true)
+                    
+                }))
+                
+                self.presentViewController(confirmAlert, animated: true, completion: nil)
+                
+            })
+            
+            let deleteEvent = UIAlertAction(title: "Delete Event", style: UIAlertActionStyle.Destructive, handler: {(alert: UIAlertAction!) in
+                
+                var confirmAlert = UIAlertController(title: "Confirm", message: "Are you sure you wish to delete \(event.name)?", preferredStyle: UIAlertControllerStyle.Alert)
+                
+                confirmAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { (action: UIAlertAction!) in
+                    
+                    cell.loader.startAnimating()
+                    
+                    event.delete({ (s) -> Void in
+                        
+                        if s {
+                            
+                            self.events.removeAtIndex(indexPath.row)
+                            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                            
+                        } else {
                             
                             tableView.setEditing(false, animated: true)
                             
@@ -300,10 +242,10 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ev
             
             })
             
-            if event.admin {
+            if event.i_am_admin {
                 editMenu.addAction(changeName)
             }
-            if event.creator {
+            if event.i_am_creator {
                 editMenu.addAction(deleteEvent)
             } else {
                 editMenu.addAction(leaveEvent)
@@ -320,14 +262,40 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ev
         
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    func addEvent(event: Event){
         
-        if segue.identifier == "event_from_events" {
+        events.insert(event, atIndex: 0)
+        setData()
+        
+    }
+    
+    @IBAction func addTPD(sender: UIBarButtonItem) {
+        
+        var vc = self.storyboard?.instantiateViewControllerWithIdentifier("new_event_vc") as NewEventVC
+        vc.events_delegate = self
+        
+        var nav = UINavigationController(rootViewController: vc)
+        
+        self.presentViewController(nav, animated: true, completion: nil)
+        
+    }
+    
+    func refreshEvent(event: Event){
+        
+        for i in 0..<countElements(events) {
             
-            var vc = segue.destinationViewController as EventDetailVC
-            vc.event = selected_event
+            if event.parse.objectId == events[i].parse.objectId {
+                
+                events[i] = event
+                break
+                
+            }
             
         }
+        
+        eventsTBL.reloadData()
+        
+        NSLog("EVENTS REFRESH")
         
     }
     

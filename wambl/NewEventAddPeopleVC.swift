@@ -8,9 +8,17 @@
 
 import UIKit
 
+protocol AddEventPTC {
+    
+    func addEvent(event: Event)
+    
+}
+
 class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
     
-    var event: PFObject!
+    var events_delegate: AddEventPTC!
+    
+    var event: Event!
     var existing: Bool = false
     
     var phone_contacts: [Contact] = []
@@ -190,31 +198,24 @@ class NewEventAddPeopleVC: UITableViewController, UISearchBarDelegate {
         navigationItem.title = "Creating..."
         saveBTN.enabled = false
         
-        event["creator"] = currentUser
-        
-        var admins: PFRelation = event.relationForKey("admins")
-        admins.addObject(currentUser)
-        
-        var invited: PFRelation = event.relationForKey("invited")
-        invited.addObject(currentUser)
+        event.admins.addObject(currentUser)
+        event.invited.addObject(currentUser)
         
         for c in selected_contacts {
             
-            invited.addObject(c.user)
+            event.invited.addObject(c.user)
             
         }
         
-        event.saveInBackgroundWithBlock { (success: Bool, error: NSError!) -> Void in
+        event.save { (s) -> Void in
             
-            if success {
+            if s {
+                
+                self.events_delegate.addEvent(self.event)
                 
                 self.dismissViewControllerAnimated(true, completion: nil)
                 
             } else {
-                
-                var code: Int = error.userInfo?["code"] as Int
-                var error_string: String = error.userInfo?["error"] as String
-                Error.report(currentUser, code: code, error: error_string, alert: true, p: self)
                 
                 self.saveBTN.enabled = true
                 

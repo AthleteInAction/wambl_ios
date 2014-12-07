@@ -80,10 +80,9 @@ class VerifyPhoneVC: UIViewController, UITextFieldDelegate {
         saveBTN.enabled = false
         loader.startAnimating()
         
-        PFUser.logInWithUsernameInBackground(user.username, password: user.password) {
-            (user: PFUser!, error: NSError!) -> Void in
+        DB.login(username: user.username, password: user.username) { (s, error) -> Void in
             
-            if user != nil {
+            if s {
                 
                 self.loader.stopAnimating()
                 
@@ -97,7 +96,6 @@ class VerifyPhoneVC: UIViewController, UITextFieldDelegate {
             } else {
                 
                 var code = error.userInfo?["code"] as Int
-                var error_string = error.userInfo?["error"] as String
                 
                 if code == 101 {
                     
@@ -105,7 +103,6 @@ class VerifyPhoneVC: UIViewController, UITextFieldDelegate {
                     
                 } else {
                     
-                    Error.report(nil, code: code, error: error_string,alert: true,p: self)
                     self.saveBTN.enabled = true
                     
                 }
@@ -118,10 +115,9 @@ class VerifyPhoneVC: UIViewController, UITextFieldDelegate {
     
     func signup(){
         
-        user.signUpInBackgroundWithBlock {
-            (succeeded: Bool!, error: NSError!) -> Void in
+        DB.signup(user: user) { (s, e) -> Void in
             
-            if !(error != nil) {
+            if s {
                 
                 self.loader.stopAnimating()
                 
@@ -135,15 +131,9 @@ class VerifyPhoneVC: UIViewController, UITextFieldDelegate {
                 
             } else {
                 
-                var code = error.userInfo?["code"] as Int
-                var error_string = error.userInfo?["error"] as String
-                
-                Error.report(nil, code: code, error: error_string,alert: true,p: self)
                 self.saveBTN.enabled = true
                 
             }
-            
-            self.loader.stopAnimating()
             
         }
         

@@ -40,11 +40,10 @@
 		AD619F7D1A2C9EAF00BAC68F /* EventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD619F7C1A2C9EAF00BAC68F /* EventCell.swift */; };
 		AD619F7F1A2CB28900BAC68F /* EventDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD619F7E1A2CB28900BAC68F /* EventDetailVC.swift */; };
 		ADCFAC131A2D8D4F00924E4B /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCFAC121A2D8D4F00924E4B /* Date.swift */; };
-		ADE471D41A2DD82F0009F768 /* InviteesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE471D31A2DD82F0009F768 /* InviteesVC.swift */; };
 		ADE471D61A2DEED00009F768 /* DB.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE471D51A2DEED00009F768 /* DB.swift */; };
-		ADE471D81A2EC6D00009F768 /* AddInviteeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE471D71A2EC6D00009F768 /* AddInviteeVC.swift */; };
 		ADE471DA1A2EE6C60009F768 /* AppContacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE471D91A2EE6C60009F768 /* AppContacts.swift */; };
-		ADE471DC1A2F5C880009F768 /* InviteeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE471DB1A2F5C880009F768 /* InviteeCell.swift */; };
+		ADE471DE1A348C0D0009F768 /* InviteesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE471DD1A348C0D0009F768 /* InviteesVC.swift */; };
+		ADE471E01A348DD50009F768 /* InviteeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE471DF1A348DD50009F768 /* InviteeCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,11 +95,10 @@
 		AD619F7C1A2C9EAF00BAC68F /* EventCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventCell.swift; sourceTree = "<group>"; };
 		AD619F7E1A2CB28900BAC68F /* EventDetailVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventDetailVC.swift; sourceTree = "<group>"; };
 		ADCFAC121A2D8D4F00924E4B /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
-		ADE471D31A2DD82F0009F768 /* InviteesVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteesVC.swift; sourceTree = "<group>"; };
 		ADE471D51A2DEED00009F768 /* DB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DB.swift; sourceTree = "<group>"; };
-		ADE471D71A2EC6D00009F768 /* AddInviteeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddInviteeVC.swift; sourceTree = "<group>"; };
 		ADE471D91A2EE6C60009F768 /* AppContacts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppContacts.swift; sourceTree = "<group>"; };
-		ADE471DB1A2F5C880009F768 /* InviteeCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteeCell.swift; sourceTree = "<group>"; };
+		ADE471DD1A348C0D0009F768 /* InviteesVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteesVC.swift; sourceTree = "<group>"; };
+		ADE471DF1A348DD50009F768 /* InviteeCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteeCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -271,9 +269,8 @@
 		ADE471D21A2DD8120009F768 /* Invitees */ = {
 			isa = PBXGroup;
 			children = (
-				ADE471D31A2DD82F0009F768 /* InviteesVC.swift */,
-				ADE471D71A2EC6D00009F768 /* AddInviteeVC.swift */,
-				ADE471DB1A2F5C880009F768 /* InviteeCell.swift */,
+				ADE471DD1A348C0D0009F768 /* InviteesVC.swift */,
+				ADE471DF1A348DD50009F768 /* InviteeCell.swift */,
 			);
 			name = Invitees;
 			sourceTree = "<group>";
@@ -386,13 +383,13 @@
 				A62AFE3E1A2C1637002C4EEE /* VerifyPhoneVC.swift in Sources */,
 				A62AFDF81A2C0001002C4EEE /* AppDelegate.swift in Sources */,
 				ADE471DA1A2EE6C60009F768 /* AppContacts.swift in Sources */,
+				ADE471DE1A348C0D0009F768 /* InviteesVC.swift in Sources */,
+				ADE471E01A348DD50009F768 /* InviteeCell.swift in Sources */,
 				ADCFAC131A2D8D4F00924E4B /* Date.swift in Sources */,
-				ADE471DC1A2F5C880009F768 /* InviteeCell.swift in Sources */,
 				A62AFE4C1A2C490C002C4EEE /* Contact.swift in Sources */,
 				AD619F7D1A2C9EAF00BAC68F /* EventCell.swift in Sources */,
 				A62AFE471A2C4283002C4EEE /* NewEventEndDateVC.swift in Sources */,
 				A62AFE4D1A2C490C002C4EEE /* Contacts.swift in Sources */,
-				ADE471D81A2EC6D00009F768 /* AddInviteeVC.swift in Sources */,
 				A62AFE491A2C4513002C4EEE /* NewEventAddPeopleVC.swift in Sources */,
 				A62AFE4F1A2C53B3002C4EEE /* Tools.swift in Sources */,
 				AD619F7F1A2CB28900BAC68F /* EventDetailVC.swift in Sources */,
@@ -400,7 +397,6 @@
 				AD619F7B1A2C927C00BAC68F /* Event.swift in Sources */,
 				A62AFE411A2C29E8002C4EEE /* EventsVC.swift in Sources */,
 				ADE471D61A2DEED00009F768 /* DB.swift in Sources */,
-				ADE471D41A2DD82F0009F768 /* InviteesVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -4,22 +4,28 @@ class AppContacts {
     
     init(){
         
-        update()
+        
         
     }
     
-    func update() {
+    func update(completion: (s: Bool) -> Void) {
         
-        DB.contacts.load(self, completion: { (s, c) -> Void in
+        DB.contacts.load { (s, c) -> Void in
             
             if s {
                 
                 self.contacts = c
                 self.contacts.sort({$0.sort_name < $1.sort_name})
                 
+            } else {
+                
+                
+                
             }
             
-        })
+            completion(s: s)
+            
+        }
         
     }
     

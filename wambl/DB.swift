@@ -1,212 +1,143 @@
 class DB {
     
+    // LOGIN
+    // ========================================================================
+    // ========================================================================
+    class func login(username _username: String, password _password: String, completion: (s: Bool, error: NSError!) -> Void) {
+        
+        PFUser.logInWithUsernameInBackground(_username, password: _password) { (user: PFUser!, error: NSError!) -> Void in
+            
+            if !(error != nil) {
+                
+                currentUser = PFUser.currentUser()
+                
+            } else {
+                
+                var code = error.userInfo?["code"] as Int
+                
+                Error.report(user: nil, error: error, alert: true)
+                
+            }
+            
+            completion(s: !(error != nil), error: error)
+            
+        }
+        
+    }
+    // ========================================================================
+    // ========================================================================
+    
+    // SIGNUP
+    // ========================================================================
+    // ========================================================================
+    class func signup(user _user: PFUser, completion: (s: Bool, e: NSError!) -> Void){
+        
+        _user.signUpInBackgroundWithBlock { (success: Bool, error: NSError!) -> Void in
+            
+            if !success {
+                
+                Error.report(user: nil, error: error, alert: true)
+                
+            }
+            
+            completion(s: success, e: error)
+            
+        }
+        
+    }
+    // ========================================================================
+    // ========================================================================
+    
     // EVENTS
     // ========================================================================
     // ========================================================================
-    class event {
+    class func getEvents(completion: (s: Bool, events: [Event]) -> Void){
+    
+        var admins_done = false
+        var users_done = false
         
-        // LOAD AN EVENT
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        class func load(event: PFObject,view: AnyObject, completion: (s: Bool,e: PFObject) -> Void) {
+        var tmp_events: [Event] = []
+        
+        var invited_query = PFQuery(className: "Events")
+        invited_query.whereKey("invited", containedIn: [currentUser])
+        invited_query.whereKey("admins", notContainedIn: [currentUser])
+        
+        var admins_query = PFQuery(className: "Events")
+        admins_query.whereKey("admins", containedIn: [currentUser])
+        
+        invited_query.findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
             
-            var query = PFQuery(className: "Events")
-            
-            query.getObjectInBackgroundWithId(event.objectId, block: { (object: PFObject!, error: NSError!) -> Void in
+            if !(error != nil){
                 
-                var s: Bool!
-                var e: PFObject!
-                
-                if !(error != nil){
+                for object in objects {
                     
-                    s = true
-                    e = object
+                    var event = object as PFObject
                     
-                } else {
+                    var tmp_event = Event(event: event)
                     
-                    s = false
-                    
-                    var code = error.userInfo?["code"] as Int
-                    var error_string = error.userInfo?["error"] as String
-                    Error.report(currentUser, code: code, error: error_string, alert: true, p: view)
+                    tmp_events.append(tmp_event)
                     
                 }
                 
-                completion(s: s, e: e)
+            } else {
                 
-            })
+                Error.report(user: currentUser, error: error, alert: true)
+                
+            }
             
-        }
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        
-        // INVITED USERS
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        class invited {
+            users_done = true
             
-            class func load(event: PFObject,view: AnyObject, completion: (s: Bool,c: [Contact]) -> Void) {
+            if admins_done {
                 
-                var relation = event["invited"] as PFRelation
-                
-                var contacts = Contacts.getContacts()!
-                
-                relation.query().findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
-                    
-                    var s: Bool!
-                    var c: [Contact] = []
-                    
-                    if !(error != nil){
-                        
-                        s = true
-                        
-                        for o in objects {
-                            
-                            var user = o as PFUser
-                            
-                            var tmp_contact = Tools.findContactByNumber(contacts, number: user.username) as Contact
-                            var new_contact = Contact()
-                            
-                            if tmp_contact.empty {
-                                
-                                new_contact.display_name = user["name"] as String
-                                new_contact.contact_full = user["name"] as String
-                                new_contact.phone_number = user.username
-                                
-                            } else {
-                                
-                                new_contact = tmp_contact
-                                
-                            }
-                            
-                            new_contact.user = user
-                            
-                            c.append(new_contact)
-                            
-                        }
-                        
-                        
-                    } else {
-                        
-                        s = false
-                        
-                        var code = error.userInfo?["code"] as Int
-                        var error_string = error.userInfo?["error"] as String
-                        Error.report(currentUser, code: code, error: error_string, alert: true, p: view)
-                        
-                    }
-                    
-                    completion(s: s, c: c)
-                    
-                }
+                completion(s: !(error != nil), events: tmp_events)
                 
             }
             
         }
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         
-        // CONFIRMED USERS
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        class confirmed {
+        admins_query.findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
             
-            class func load(event: PFObject,view: AnyObject, completion: (s: Bool,u: [PFUser]) -> Void) {
+            if !(error != nil){
                 
-                var relation = event["confirmed"] as PFRelation
-                
-                relation.query().findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
+                for object in objects {
                     
-                    var s: Bool!
-                    var u: [PFUser] = []
+                    var event = object as PFObject
                     
-                    if !(error != nil){
+                    var tmp_event = Event(event: event)
+                    
+                    if tmp_event.creator.objectId == currentUser.objectId {
                         
-                        s = true
-                        
-                        for o in objects {
-                            
-                            var user = o as PFUser
-                            u.append(user)
-                            
-                        }
-                        
-                        
-                    } else {
-                        
-                        s = false
-                        
-                        var code = error.userInfo?["code"] as Int
-                        var error_string = error.userInfo?["error"] as String
-                        Error.report(currentUser, code: code, error: error_string, alert: true, p: view)
+                        tmp_event.i_am_admin = true
                         
                     }
                     
-                    completion(s: s, u: u)
+                    tmp_events.append(tmp_event)
                     
                 }
+                
+            } else {
+                
+                Error.report(user: currentUser, error: error, alert: true)
+                
+            }
+            
+            admins_done = true
+            
+            if users_done {
+                
+                completion(s: !(error != nil), events: tmp_events)
                 
             }
             
         }
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        
-        // ADMIN USERS
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        class admins {
-            
-            class func load(event: PFObject,view: AnyObject, completion: (s: Bool,u: [PFUser]) -> Void) {
-                
-                var relation = event["admins"] as PFRelation
-                
-                relation.query().findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
-                    
-                    var s: Bool!
-                    var u: [PFUser] = []
-                    
-                    if !(error != nil){
-                        
-                        s = true
-                        
-                        for o in objects {
-                            
-                            var user = o as PFUser
-                            u.append(user)
-                            
-                        }
-                        
-                        
-                    } else {
-                        
-                        s = false
-                        
-                        var code = error.userInfo?["code"] as Int
-                        var error_string = error.userInfo?["error"] as String
-                        Error.report(currentUser, code: code, error: error_string, alert: true, p: view)
-                        
-                    }
-                    
-                    completion(s: s, u: u)
-                    
-                }
-                
-            }
-            
-        }
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        
+    
     }
     // ========================================================================
     // ========================================================================
     
     class contacts {
         
-        class func load(view: AnyObject,completion: (s: Bool,c: [Contact]) -> Void){
-            
-            var s: Bool!
+        class func load(completion: (s: Bool,c: [Contact]) -> Void){
             
             var phone_contacts = Contacts.getContacts()!
             var app_contacts: [Contact] = []
@@ -228,8 +159,6 @@ class DB {
                 
                 if !(error != nil){
                     
-                    s = true
-                    
                     for object in objects {
                         
                         var user = object as PFUser
@@ -248,15 +177,11 @@ class DB {
                     
                 } else {
                     
-                    s = false
-                    
-                    var code = error.userInfo?["code"] as Int
-                    var error_string = error.userInfo?["error"] as String
-                    Error.report(currentUser, code: code, error: error_string, alert: true, p: view)
+                    Error.report(user: currentUser, error: error, alert: true)
                     
                 }
                 
-                completion(s: s,c: app_contacts)
+                completion(s: !(error != nil),c: app_contacts)
                 
             }
             

@@ -36,22 +36,12 @@ class CheckVC: UIViewController {
             } else {
                 
                 // USER ACCOUNT STORED
-                PFUser.logInWithUsernameInBackground(account_info, password: account_info, block: { (user: PFUser!, error: NSError!) -> Void in
+                DB.login(username: account_info, password: account_info, completion: { (s, error) -> Void in
                     
-                    if !(error != nil) {
+                    if s {
                         
-                        // LOGIN SUCCESSFUL
                         currentUser = PFUser.currentUser()
                         self.performSegueWithIdentifier("events_from_check", sender: self)
-                        
-                    } else {
-                        
-                        // LOGIN ERROR
-                        var code = error.userInfo?["code"] as Int
-                        var error_string = error.userInfo?["error"] as String
-                        
-                        // REPORT ERROR
-                        Error.report(nil, code: code, error: error_string,alert: true,p: self)
                         
                     }
                     

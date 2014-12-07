@@ -10,7 +10,10 @@ import UIKit
 
 class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
-    var event: PFObject?
+    var event: Event?
+    
+    var events_delegate: AddEventPTC!
+    
     var existing: Bool = false
     
     @IBOutlet weak var nameTXT: UITextField!
@@ -27,7 +30,7 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         
         if event == nil {
             
-            event = PFObject(className: "Events")
+            event = Event(event: nil)
             
         } else {
             
@@ -35,9 +38,9 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
             
             existing = true
             
-            nameTXT.text = event?["name"] as String
-            locTXT.text = event?["location"] as String
-            descTXT.text = event?["description"] as String
+            nameTXT.text = event?.name
+            locTXT.text = event?.location
+            descTXT.text = event?.description
             
         }
         
@@ -128,9 +131,9 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
     @IBAction func nextTPD(sender: UIBarButtonItem) {
         
-        event?["name"] = nameTXT.text
-        event?["location"] = locTXT.text
-        event?["description"] = descTXT.text
+        event?.name = nameTXT.text
+        event?.location = locTXT.text
+        event?.description = descTXT.text
         
         self.performSegueWithIdentifier("new_event_dates", sender: self)
         
@@ -149,6 +152,7 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
             var vc = segue.destinationViewController as NewEventStartDateVC
             vc.event = event
             vc.existing = existing
+            vc.events_delegate = events_delegate
             
         }
         

@@ -10,7 +10,10 @@ import UIKit
 
 class NewEventStartDateVC: UIViewController {
     
-    var event: PFObject!
+    var event: Event!
+    
+    var events_delegate: AddEventPTC!
+    
     var existing: Bool = false
 
     @IBOutlet weak var start_date: UIDatePicker!
@@ -20,7 +23,7 @@ class NewEventStartDateVC: UIViewController {
 
         if existing {
             
-            start_date.date = event["start_date"] as NSDate
+            start_date.date = event.start_date
             
         }
         
@@ -37,11 +40,12 @@ class NewEventStartDateVC: UIViewController {
         
         if segue.identifier == "start_to_end" {
             
-            event["start_date"] = start_date.date
+            event.start_date = start_date.date
             
             var vc = segue.destinationViewController as NewEventEndDateVC
             vc.event = event
             vc.existing = existing
+            vc.event_delegate = events_delegate
             
         }
         

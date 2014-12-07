@@ -8,6 +8,8 @@
 
 import UIKit
 
+var root: UIWindow!
+
 var currentUser: PFUser!
 var account_info: String!
 
@@ -24,11 +26,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
         NSLog("A")
+        
+        root = window
+        
         Parse.setApplicationId(
             "WqXGBQrglXMAJ3lBDTQIXkd8LPPZN08bJvgJe8ch",
             clientKey: "syNLknqjG5gQMunUMgnv2Ng1Wj6H6WdMbzRyXvGW"
         )
+        
+        PFUser.logOut()
         
         currentUser = PFUser.currentUser()
         
@@ -64,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(application: UIApplication) {
         NSLog("D")
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-        CONTACTS.update()
+        CONTACTS.update({(s) -> Void in})
         a = true
     }
 
@@ -72,7 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NSLog("E")
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         if !a {
-            CONTACTS.update()
+            CONTACTS.update({(s) -> Void in})
             a = false
         }
     }

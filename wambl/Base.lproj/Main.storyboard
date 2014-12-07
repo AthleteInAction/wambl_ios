@@ -164,7 +164,7 @@
                     <navigationItem key="navigationItem" title="Events" id="tYn-gB-uyr">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="aF8-sO-tfi">
                             <connections>
-                                <segue destination="uFU-mZ-n50" kind="presentation" identifier="new_event_from_events" id="5Hw-0S-7V0"/>
+                                <action selector="addTPD:" destination="gfy-dI-sLh" id="izK-x8-6eS"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -330,7 +330,7 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="" id="zgc-pS-VA0">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="invitees_cell" rowHeight="44" id="rkp-uQ-8ea">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="invitee_cell" rowHeight="44" id="rkp-uQ-8ea">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="rkp-uQ-8ea" id="XUS-F9-UOK">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -406,7 +406,6 @@
                         <outlet property="invitees_loader" destination="7V0-eM-XrN" id="4GX-rb-Q8i"/>
                         <outlet property="locTXT" destination="uW4-Px-FO6" id="1ji-b2-dai"/>
                         <outlet property="startTXT" destination="ArQ-dN-swe" id="vqo-XV-DjL"/>
-                        <segue destination="Osp-Iq-zFz" kind="show" id="Zgl-jf-qvb"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pqO-Ms-ySn" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -422,7 +421,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" rowHeight="55" id="xJg-dA-hDe" customClass="InviteeCell" customModule="wambl" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" restorationIdentifier="cell" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" rowHeight="55" id="xJg-dA-hDe" customClass="InviteeCell" customModule="wambl" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xJg-dA-hDe" id="qWG-AK-rAA">
                                     <autoresizingMask key="autoresizingMask"/>
@@ -436,7 +435,7 @@
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xsP-Oj-yyU">
                                             <rect key="frame" x="263" y="7" width="51" height="31"/>
                                             <connections>
-                                                <action selector="adminCHG:" destination="xJg-dA-hDe" eventType="valueChanged" id="m9i-r6-FGD"/>
+                                                <action selector="adminCHG:" destination="xJg-dA-hDe" eventType="valueChanged" id="Jnq-Lh-WO8"/>
                                             </connections>
                                         </switch>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Admin" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AfW-Fq-0GQ">
@@ -490,11 +489,11 @@
                                     </variation>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="adminSW" destination="xsP-Oj-yyU" id="23q-B9-vOX"/>
-                                    <outlet property="adminTXT" destination="AfW-Fq-0GQ" id="gdo-pL-24e"/>
-                                    <outlet property="confirmedTXT" destination="Cng-sR-4rh" id="2hi-K5-5V7"/>
-                                    <outlet property="loader" destination="Qgd-o1-aIK" id="6D4-P7-dM4"/>
-                                    <outlet property="nameTXT" destination="yvD-X8-5FD" id="KbL-2o-5K9"/>
+                                    <outlet property="adminSW" destination="xsP-Oj-yyU" id="ms0-wK-lhs"/>
+                                    <outlet property="adminTXT" destination="AfW-Fq-0GQ" id="tZZ-i0-kaM"/>
+                                    <outlet property="confirmedTXT" destination="Cng-sR-4rh" id="BLg-K4-eMT"/>
+                                    <outlet property="loader" destination="Qgd-o1-aIK" id="JMZ-SB-vH7"/>
+                                    <outlet property="nameTXT" destination="yvD-X8-5FD" id="1Zl-M4-PQ4"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -550,10 +549,10 @@
             </objects>
             <point key="canvasLocation" x="1313" y="2446"/>
         </scene>
-        <!--Add InviteeVC-->
+        <!--Table View Controller-->
         <scene sceneID="vIt-Uw-8pj">
             <objects>
-                <tableViewController storyboardIdentifier="add_invitee_vc" id="F83-LP-FGS" customClass="AddInviteeVC" customModule="wambl" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="add_invitee_vc" id="F83-LP-FGS" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="YIh-nb-rhE">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -597,21 +596,22 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5ih-UT-bae">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="PARSE EVENT" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5ih-UT-bae">
                                 <rect key="frame" x="20" y="84" width="280" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Location" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SRb-nh-1hN">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Truckee, CA" borderStyle="roundedRect" placeholder="Location" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SRb-nh-1hN">
                                 <rect key="frame" x="20" y="134" width="280" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                             </textField>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Oxa-56-ztS">
-                                <rect key="frame" x="20" y="184" width="280" height="120"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oxa-56-ztS">
+                                <rect key="frame" x="20" y="184" width="280" height="167"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="120" id="YTp-W7-b6Z"/>
                                 </constraints>
+                                <string key="text">The Toronto Raptors honored the late Nelson Mandela on Friday night at an event called “The Giant of Africa.”On the first anniversary of his death, the South African president and human rights icon was celebrated throughout their game against the Cavaliers, from the team wearing special warm-up gear to videos throughout the night.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 <userDefinedRuntimeAttributes>
@@ -833,7 +833,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="1-234-567-8910" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wi5-x0-wxh">
                                 <rect key="frame" x="20" y="84" width="280" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                             </textField>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="aTi-Ps-crr">
                                 <rect key="frame" x="150" y="89" width="20" height="20"/>
