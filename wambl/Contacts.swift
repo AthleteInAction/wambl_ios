@@ -117,6 +117,12 @@ class Contacts {
                     contact.sort_name = lastName
                 }
                 
+                if contact.sort_name == "" {
+                    
+                    contact.sort_name = "--"
+                    
+                }
+                
                 contacts.append(contact)
                 
             }

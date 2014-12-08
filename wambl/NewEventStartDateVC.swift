@@ -14,18 +14,16 @@ class NewEventStartDateVC: UIViewController {
     
     var events_delegate: AddEventPTC!
     
+    var refresh_event_delegate: RefreshEventPTC!
+    
     var existing: Bool = false
 
     @IBOutlet weak var start_date: UIDatePicker!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        if existing {
-            
-            start_date.date = event.start_date
-            
-        }
+        
+        
         
     }
 
@@ -36,18 +34,26 @@ class NewEventStartDateVC: UIViewController {
         
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    @IBAction func nextTPD(sender: UIBarButtonItem) {
         
-        if segue.identifier == "start_to_end" {
+        event.start_date = start_date.date
+        
+        var vc = storyboard?.instantiateViewControllerWithIdentifier("new_event_end_date_vc") as NewEventEndDateVC
+        vc.event = event
+        vc.events_delegate = events_delegate
+        vc.existing = existing
+        vc.loadView()
+        
+        if existing {
             
-            event.start_date = start_date.date
-            
-            var vc = segue.destinationViewController as NewEventEndDateVC
-            vc.event = event
-            vc.existing = existing
-            vc.event_delegate = events_delegate
+            vc.refresh_event_delegate = refresh_event_delegate
+            vc.end_date.date = event.end_date
             
         }
+        
+        vc.end_date.minimumDate = event.start_date
+        
+        navigationController?.pushViewController(vc, animated: true)
         
     }
 

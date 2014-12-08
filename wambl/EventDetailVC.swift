@@ -44,6 +44,8 @@ class EventDetailVC: UITableViewController, RefreshEventPTC {
     
     func setData(){
         
+        navigationItem.rightBarButtonItem = nil
+        
         checkConfirmed()
         
         if event.invited_list.count == 0 {
@@ -56,6 +58,17 @@ class EventDetailVC: UITableViewController, RefreshEventPTC {
             
         }
         
+        if event.i_am_admin {
+            
+            var editBTN = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Edit, target: self, action: "editTPD")
+            navigationItem.rightBarButtonItem = editBTN
+            
+        } else {
+            
+            navigationItem.rightBarButtonItem = nil
+            
+        }
+        
         locTXT.text = event.location
         startTXT.text = Date.fullString(event.start_date)
         endTXT.text = Date.fullString(event.end_date)
@@ -63,6 +76,19 @@ class EventDetailVC: UITableViewController, RefreshEventPTC {
         refresh_event_delegate.refreshEvent(event)
         
         rc.endRefreshing()
+        
+    }
+    
+    func editTPD(){
+        
+        var vc = self.storyboard?.instantiateViewControllerWithIdentifier("new_event_vc") as NewEventVC
+        vc.event = event
+        vc.existing = true
+        vc.refresh_event_delegate = self
+        
+        var nav = UINavigationController(rootViewController: vc)
+        
+        self.presentViewController(nav, animated: true, completion: nil)
         
     }
     
@@ -304,8 +330,6 @@ class EventDetailVC: UITableViewController, RefreshEventPTC {
         tableView.reloadData()
         
         refresh_event_delegate.refreshEvent(new_event)
-        
-        NSLog("DETAIL REFRESH")
         
     }
     

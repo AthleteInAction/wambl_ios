@@ -12,11 +12,11 @@ class NewEventEndDateVC: UIViewController {
     
     var event: Event!
     
-    var event_delegate: AddEventPTC!
+    var events_delegate: AddEventPTC!
+    
+    var refresh_event_delegate: RefreshEventPTC!
     
     var existing: Bool = false
-    
-    var vc: NewEventAddPeopleVC!
     
     @IBOutlet weak var end_date: UIDatePicker!
     @IBOutlet weak var nextBTN: UIBarButtonItem!
@@ -24,27 +24,27 @@ class NewEventEndDateVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if existing {
-            
-            nextBTN.title = "Save"
-            
-            end_date.date = event.end_date
-            
-        } else {
-            
-            end_date.date = event.start_date
-            
-            vc = storyboard?.instantiateViewControllerWithIdentifier("new_event_add_people_vc") as NewEventAddPeopleVC
-            
-        }
-        
-        end_date.minimumDate = event.start_date
+        NSLog("END DATE VIEW DID LOAD")
         
     }
     
     override func viewDidAppear(animated: Bool) {
         
         
+        
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        if existing {
+            
+            nextBTN.title = "Save"
+            
+        } else {
+            
+            nextBTN.title = "Next"
+            
+        }
         
     }
 
@@ -59,6 +59,8 @@ class NewEventEndDateVC: UIViewController {
         
         event.end_date = end_date.date
         
+        var vc = storyboard?.instantiateViewControllerWithIdentifier("new_event_add_people_vc") as NewEventAddPeopleVC
+        
         if existing {
             
             navigationItem.title = "Saving..."
@@ -66,8 +68,6 @@ class NewEventEndDateVC: UIViewController {
             event.save({ (s) -> Void in
                 
                 if s {
-                    
-                    self.event_delegate.addEvent(self.event)
                     
                     self.dismissViewControllerAnimated(true, completion: nil)
                     
@@ -78,13 +78,15 @@ class NewEventEndDateVC: UIViewController {
                     
                 }
                 
+                self.refresh_event_delegate.refreshEvent(self.event)
+                
             })
             
         } else {
             
             vc.event = event
             vc.existing = existing
-            vc.events_delegate = event_delegate
+            vc.events_delegate = events_delegate
             
             navigationController?.pushViewController(vc, animated: true)
             

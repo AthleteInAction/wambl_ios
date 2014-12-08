@@ -150,13 +150,7 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ad
         
         var editAction = UITableViewRowAction(style: UITableViewRowActionStyle.Default, title: "Edit" , handler: { (a: UITableViewRowAction!, i: NSIndexPath!) -> Void in
             
-            var editMenu = UIAlertController(title: "Edit", message: nil, preferredStyle: .ActionSheet)
-            
-            var changeName = UIAlertAction(title: "Change Details", style: UIAlertActionStyle.Default, handler: {(action: UIAlertAction!) -> Void in
-                
-                tableView.setEditing(false, animated: true)
-                
-            })
+            var editMenu = UIAlertController(title: "EDIT", message: nil, preferredStyle: .ActionSheet)
             
             let leaveEvent = UIAlertAction(title: "Leave Event", style: UIAlertActionStyle.Destructive, handler: {(alert: UIAlertAction!) in
                 
@@ -167,8 +161,6 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ad
                     cell.loader.startAnimating()
                     
                     event.invited.removeObject(currentUser)
-                    event.admins.removeObject(currentUser)
-                    event.confirmed.removeObject(currentUser)
                     
                     event.save({ (s) -> Void in
                         
@@ -178,6 +170,8 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ad
                             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
                             
                         } else {
+                            
+                            event.invited.addObject(currentUser)
                             
                             tableView.setEditing(false, animated: true)
                             
@@ -242,21 +236,17 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ad
             
             })
             
-            if event.i_am_admin {
-                editMenu.addAction(changeName)
-            }
             if event.i_am_creator {
                 editMenu.addAction(deleteEvent)
-            } else {
-                editMenu.addAction(leaveEvent)
             }
+            editMenu.addAction(leaveEvent)
             editMenu.addAction(cancelAction)
             
             self.presentViewController(editMenu, animated: true, completion: nil)
             
         })
         
-        editAction.backgroundColor = UIColor.grayColor()
+        editAction.backgroundColor = UIColor.redColor()
         
         return [editAction]
         
@@ -273,6 +263,7 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ad
         
         var vc = self.storyboard?.instantiateViewControllerWithIdentifier("new_event_vc") as NewEventVC
         vc.events_delegate = self
+        vc.event = Event(event: nil)
         
         var nav = UINavigationController(rootViewController: vc)
         
@@ -293,9 +284,7 @@ class EventsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Ad
             
         }
         
-        eventsTBL.reloadData()
-        
-        NSLog("EVENTS REFRESH")
+        setData()
         
     }
     

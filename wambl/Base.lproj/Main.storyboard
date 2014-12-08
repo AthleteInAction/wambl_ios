@@ -236,6 +236,10 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uW4-Px-FO6">
+                                                    <rect key="frame" x="14" y="11" width="265" height="21"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="21" id="UVN-D6-aAi"/>
+                                                    </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.33306716159999999" green="0.33306716159999999" blue="0.33306716159999999" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -385,7 +389,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="pda-ZK-8Lv" kind="push" id="A1c-CW-Pf1"/>
+                                            <segue destination="pda-ZK-8Lv" kind="show" id="A1c-CW-Pf1"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -421,7 +425,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" restorationIdentifier="cell" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" rowHeight="55" id="xJg-dA-hDe" customClass="InviteeCell" customModule="wambl" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" restorationIdentifier="cell" selectionStyle="gray" indentationWidth="10" reuseIdentifier="cell" rowHeight="55" id="xJg-dA-hDe" customClass="InviteeCell" customModule="wambl" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xJg-dA-hDe" id="qWG-AK-rAA">
                                     <autoresizingMask key="autoresizingMask"/>
@@ -549,14 +553,19 @@
             </objects>
             <point key="canvasLocation" x="1313" y="2446"/>
         </scene>
-        <!--Table View Controller-->
+        <!--InviteVC-->
         <scene sceneID="vIt-Uw-8pj">
             <objects>
-                <tableViewController storyboardIdentifier="add_invitee_vc" id="F83-LP-FGS" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="invite_vc" id="F83-LP-FGS" customClass="InviteVC" customModule="wambl" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="YIh-nb-rhE">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <searchBar key="tableHeaderView" contentMode="redraw" searchBarStyle="minimal" placeholder="Search Contacts" id="LdN-3W-6GF">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <textInputTraits key="textInputTraits"/>
+                        </searchBar>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" textLabel="aNr-nf-aOl" style="IBUITableViewCellStyleDefault" id="qaJ-cM-b5H">
                                 <autoresizingMask key="autoresizingMask"/>
@@ -579,8 +588,20 @@
                         </connections>
                     </tableView>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <connections>
+                        <outlet property="searchBAR" destination="LdN-3W-6GF" id="OVg-LQ-lvL"/>
+                        <outlet property="searchDisplayController" destination="T2R-5I-7Ju" id="bcT-b8-oX0"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SpD-kW-WNY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="T2R-5I-7Ju">
+                    <connections>
+                        <outlet property="delegate" destination="F83-LP-FGS" id="AUW-EX-YiH"/>
+                        <outlet property="searchContentsController" destination="F83-LP-FGS" id="Wf3-hh-WT2"/>
+                        <outlet property="searchResultsDataSource" destination="F83-LP-FGS" id="RWW-Og-3rW"/>
+                        <outlet property="searchResultsDelegate" destination="F83-LP-FGS" id="fIU-eb-vp6"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="2077" y="1798"/>
         </scene>
@@ -606,12 +627,12 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                             </textField>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oxa-56-ztS">
-                                <rect key="frame" x="20" y="184" width="280" height="167"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Oxa-56-ztS">
+                                <rect key="frame" x="20" y="184" width="280" height="120"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="120" id="YTp-W7-b6Z"/>
                                 </constraints>
-                                <string key="text">The Toronto Raptors honored the late Nelson Mandela on Friday night at an event called “The Giant of Africa.”On the first anniversary of his death, the South African president and human rights icon was celebrated throughout their game against the Cavaliers, from the team wearing special warm-up gear to videos throughout the night.</string>
+                                <string key="text">The Toronto Raptors honored the late Nelson Mandela on Friday night at an event called “The Giant of Africa.”On the first anniversary of his death.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 <userDefinedRuntimeAttributes>
@@ -675,7 +696,7 @@
         <!--Start Date-->
         <scene sceneID="YVu-To-9hX">
             <objects>
-                <viewController id="0Ml-Q9-RFE" customClass="NewEventStartDateVC" customModule="wambl" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="new_event_start_date_vc" id="0Ml-Q9-RFE" customClass="NewEventStartDateVC" customModule="wambl" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="zGF-Kh-iEn"/>
                         <viewControllerLayoutGuide type="bottom" id="zzu-wV-c6r"/>
@@ -707,13 +728,14 @@
                     <navigationItem key="navigationItem" title="Start Date" id="aXn-c4-5vG">
                         <barButtonItem key="rightBarButtonItem" title="Next" id="BAV-ZU-Ni1">
                             <connections>
-                                <segue destination="BzW-rm-GvO" kind="show" identifier="start_to_end" id="R0K-aw-WuX"/>
+                                <action selector="nextTPD:" destination="0Ml-Q9-RFE" id="HCi-SH-HM0"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="start_date" destination="pYG-bH-Bxr" id="2zE-x9-SI3"/>
+                        <segue destination="BzW-rm-GvO" kind="show" identifier="a1" id="OrR-nJ-zt5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Jhp-Cz-c6i" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -723,7 +745,7 @@
         <!--End Date-->
         <scene sceneID="lnV-aD-BVu">
             <objects>
-                <viewController id="BzW-rm-GvO" customClass="NewEventEndDateVC" customModule="wambl" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="new_event_end_date_vc" id="BzW-rm-GvO" customClass="NewEventEndDateVC" customModule="wambl" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="kd9-h0-5WB"/>
                         <viewControllerLayoutGuide type="bottom" id="TGQ-Ur-6fU"/>
@@ -907,8 +929,10 @@
         <!--Navigation Controller-->
         <scene sceneID="9z7-gD-awC">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="19a-57-2p1" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController storyboardIdentifier="details_nav" automaticallyAdjustsScrollViewInsets="NO" id="uFU-mZ-n50" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <navigationItem key="navigationItem" id="IOu-2R-HT4"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="aA8-n2-pQ8">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -919,7 +943,6 @@
                         <segue destination="aOa-Ez-ox1" kind="relationship" relationship="rootViewController" id="6eJ-Gg-t2S"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="19a-57-2p1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1697" y="1139"/>
         </scene>

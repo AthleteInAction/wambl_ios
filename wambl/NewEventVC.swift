@@ -10,9 +10,11 @@ import UIKit
 
 class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
-    var event: Event?
+    var event: Event = Event(event: nil)
     
     var events_delegate: AddEventPTC!
+    
+    var refresh_event_delegate: RefreshEventPTC!
     
     var existing: Bool = false
     
@@ -26,21 +28,9 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        nextBTN.enabled = false
-        
-        if event == nil {
-            
-            event = Event(event: nil)
-            
-        } else {
+        if existing {
             
             navigationItem.title = "Edit Event"
-            
-            existing = true
-            
-            nameTXT.text = event?.name
-            locTXT.text = event?.location
-            descTXT.text = event?.description
             
         }
         
@@ -57,6 +47,18 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         nameTXT.addTarget(self, action: "checkClean", forControlEvents: .EditingChanged)
         locTXT.addTarget(self, action: "checkClean", forControlEvents: .EditingChanged)
         
+    }
+    
+    func setData(){
+        
+        if existing {
+            
+            nameTXT.text = event.name
+            locTXT.text = event.location
+            descTXT.text = event.description
+            
+        }
+        
         checkClean()
         
     }
@@ -64,6 +66,12 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     override func viewDidAppear(animated: Bool) {
         
         
+        
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        setData()
         
     }
 
@@ -131,30 +139,30 @@ class NewEventVC: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
     @IBAction func nextTPD(sender: UIBarButtonItem) {
         
-        event?.name = nameTXT.text
-        event?.location = locTXT.text
-        event?.description = descTXT.text
+        event.name = nameTXT.text
+        event.location = locTXT.text
+        event.description = descTXT.text
         
-        self.performSegueWithIdentifier("new_event_dates", sender: self)
+        var vc = storyboard?.instantiateViewControllerWithIdentifier("new_event_start_date_vc") as NewEventStartDateVC
+        vc.event = event
+        vc.existing = existing
+        vc.events_delegate = events_delegate
+        vc.loadView()
+        
+        if existing {
+            
+            vc.refresh_event_delegate = refresh_event_delegate
+            vc.start_date.date = event.start_date as NSDate
+            
+        }
+        
+        navigationController?.pushViewController(vc, animated: true)
         
     }
     
     @IBAction func cancelTPD(sender: UIBarButtonItem) {
         
         self.dismissViewControllerAnimated(true, completion: nil)
-        
-    }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
-        if segue.identifier == "new_event_dates" {
-            
-            var vc = segue.destinationViewController as NewEventStartDateVC
-            vc.event = event
-            vc.existing = existing
-            vc.events_delegate = events_delegate
-            
-        }
         
     }
     

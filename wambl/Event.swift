@@ -88,9 +88,12 @@ class Event {
             
             if !success {
                 
+                println("SAVE ERROR")
                 Error.report(user: currentUser, error: error, alert: true)
                 
             }
+            
+            self.setStatus()
             
             completion(s: success)
             
@@ -108,6 +111,8 @@ class Event {
                 Error.report(user: currentUser, error: error, alert: true)
                 
             }
+            
+            self.setStatus()
             
             completion(s: success)
             
@@ -148,6 +153,8 @@ class Event {
                 
             }
             
+            self.setStatus()
+            
             completion(s: !(error != nil))
             
         }
@@ -175,6 +182,8 @@ class Event {
                 Error.report(user: currentUser, error: error, alert: true)
                 
             }
+            
+            self.setStatus()
             
             completion(s: !(error != nil))
             
@@ -204,6 +213,8 @@ class Event {
                 
             }
             
+            self.setStatus()
+            
             completion(s: !(error != nil))
             
         }
@@ -212,14 +223,12 @@ class Event {
     
     func addInvited(contact: Contact){
         
-//        invited.addObject(contact.user)
         invited_list.append(contact)
+        self.setStatus()
         
     }
     
     func removeInvited(user: PFUser){
-        
-//        invited.removeObject(user)
         
         for i in 0..<countElements(invited_list) {
             
@@ -232,18 +241,18 @@ class Event {
             
         }
         
+        self.setStatus()
+        
     }
     
     func addConfirmed(user: PFUser){
         
-//        confirmed.addObject(user)
         confirmed_list.append(user)
+        self.setStatus()
         
     }
     
     func removeConfirmed(user: PFUser){
-        
-//        confirmed.removeObject(user)
         
         for i in 0..<countElements(confirmed_list) {
             
@@ -256,18 +265,18 @@ class Event {
             
         }
         
+        self.setStatus()
+        
     }
     
     func addAdmin(user: PFUser){
         
-//        admins.addObject(user)
         admins_list.append(user)
+        self.setStatus()
         
     }
     
     func removeAdmin(user: PFUser){
-        
-//        admins.removeObject(user)
         
         for i in 0..<countElements(admins_list) {
             
@@ -277,6 +286,77 @@ class Event {
                 break
                 
             }
+            
+        }
+        
+        self.setStatus()
+        
+    }
+    
+    func isInvited(user: PFUser) -> Bool {
+        
+        var found: Bool = false
+        
+        for c in invited_list {
+            
+            if c.user.objectId == user.objectId {
+                
+                found = true
+                break
+                
+            }
+            
+        }
+        
+        return found
+        
+    }
+    
+    func isAdmin(user: PFUser) -> Bool {
+        
+        var found: Bool = false
+        
+        for u in admins_list {
+            
+            if u.objectId == user.objectId {
+                
+                found = true
+                break
+                
+            }
+            
+        }
+        
+        return found
+        
+    }
+    
+    func isConfirmed(user: PFUser) -> Bool {
+        
+        var found: Bool = false
+        
+        for u in confirmed_list {
+            
+            if u.objectId == user.objectId {
+                
+                found = true
+                break
+                
+            }
+            
+        }
+        
+        return found
+        
+    }
+    
+    func setStatus(){
+        
+        for i in 0..<countElements(invited_list) {
+            
+            invited_list[i].creator = (creator.objectId == invited_list[i].user.objectId)
+            invited_list[i].admin = isAdmin(invited_list[i].user)
+            invited_list[i].confirmed = isConfirmed(invited_list[i].user)
             
         }
         

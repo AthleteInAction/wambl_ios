@@ -4,7 +4,7 @@ import UIKit
 
 class Contact {
     
-    var user: PFUser!
+    var user: PFUser = PFUser()
     var admin: Bool = false
     var creator: Bool = false
     var confirmed: Bool = false
